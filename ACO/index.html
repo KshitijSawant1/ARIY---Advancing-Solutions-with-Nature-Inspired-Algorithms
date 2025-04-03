@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ant Colony Visualizer</title>
+    <style>
+      body {
+        margin: 0;
+        background: #111;
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+      }
+      canvas {
+        border: 1px solid #444;
+        margin-top: 10px;
+      }
+      .controls {
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ant Colony Optimization Visualizer</h1>
+
+    <div class="controls">
+      <label for="ants">Ants:</label>
+      <input
+        type="range"
+        id="ants"
+        min="1"
+        max="100"
+        value="10"
+        oninput="updateSliderValue('antsVal', this.value)"
+      />
+      <span id="antsVal">10</span>
+
+      <label for="alpha">Alpha (pheromone):</label>
+      <input
+        type="range"
+        id="alpha"
+        min="0"
+        max="5"
+        step="0.1"
+        value="1"
+        oninput="updateSliderValue('alphaVal', this.value)"
+      />
+      <span id="alphaVal">1</span>
+
+      <label for="beta">Beta (heuristic):</label>
+      <input
+        type="range"
+        id="beta"
+        min="0"
+        max="5"
+        step="0.1"
+        value="2"
+        oninput="updateSliderValue('betaVal', this.value)"
+      />
+      <span id="betaVal">2</span>
+
+      <label for="evaporation">Evaporation:</label>
+      <input
+        type="range"
+        id="evaporation"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.5"
+        oninput="updateSliderValue('evapVal', this.value)"
+      />
+      <span id="evapVal">0.5</span>
+      <label for="random-count">Random Nodes:</label>
+      <input type="range" id="random-count" min="1" max="50" value="10" />
+      <span id="random-count-value">10</span>
+      <button
+        onclick="addRandomNodes(parseInt(document.getElementById('random-count').value))"
+      >
+        Add Random
+      </button>
+
+      <button onclick="startACO()">Start</button>
+      <button onclick="clearCanvas()">Clear</button>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <script>
+      document
+        .getElementById("random-count")
+        .addEventListener("input", function () {
+          document.getElementById("random-count-value").innerText = this.value;
+        });
+    </script>
+
+    <script src="aco.js"></script>
+  </body>
+</html>
