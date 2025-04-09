@@ -4,11 +4,14 @@ import {
   clearCanvas,
   addRandomNodes,
   registerCanvasClick,
+  updateNodeListUI,
+  updateResultTable,
 } from "./aco";
 
 const Visualizer = () => {
   useEffect(() => {
     registerCanvasClick();
+    updateNodeListUI();
   }, []);
 
   return (
@@ -132,6 +135,26 @@ const Visualizer = () => {
             height="600"
             className="border border-gray-700 block"
           ></canvas>
+        </div>
+      </div>
+
+      {/* Result Table */}
+      <div className="mt-8 text-center">
+        <h2 className="text-xl font-bold mb-4 underline">
+          Final Path Cost Table
+        </h2>
+        <div
+          id="result-table"
+          className="overflow-x-auto text-sm bg-gray-900 border border-gray-700 rounded p-4"
+        >
+          {/* Table inserted here dynamically */}
+        </div>
+      </div>
+
+      {/* Final Path Text */}
+      <div className="mt-4 text-center">
+        <div id="final-path" className="text-lg font-semibold text-white">
+          {/* Final path string inserted here */}
         </div>
       </div>
     </div>

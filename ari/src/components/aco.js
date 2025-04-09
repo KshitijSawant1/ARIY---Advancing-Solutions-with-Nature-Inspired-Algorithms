@@ -11,6 +11,7 @@ let Q = 100;
 let bestTour = [];
 let bestLength = Infinity;
 export let isRunning = false;
+export let sourceNode = null;
 
 let antAgents = [];
 let animationInterval;
@@ -59,7 +60,8 @@ function animateAnts() {
   antAgents = [];
 
   for (let a = 0; a < numAnts; a++) {
-    let startNode = a % nodes.length;
+    let startNode = sourceNode !== null ? sourceNode : a % nodes.length;
+
     antAgents.push({
       path: [startNode],
       visited: new Set([startNode]),
@@ -142,6 +144,8 @@ export function startACO() {
     }
     clearInterval(animationInterval);
     drawBestTour();
+    updateResultTable(); // <-- new function to generate the table
+
     isRunning = false;
   }, 5000);
 }
@@ -151,7 +155,8 @@ function runACOIteration() {
   let allLengths = [];
 
   for (let a = 0; a < numAnts; a++) {
-    let startNode = a % nodes.length;
+    let startNode = sourceNode !== null ? sourceNode : a % nodes.length;
+
     let tour = [startNode];
     let visited = new Set(tour);
 
@@ -231,18 +236,38 @@ export function addRandomNodes(count) {
     nodes.push({ x, y });
   }
   drawPoints();
+  updateNodeListUI(); // <--- add this here too
+  
 }
 
 export function registerCanvasClick() {
   const canvas = document.getElementById("canvas");
   if (!canvas) return;
+
   canvas.addEventListener("click", function (e) {
     if (isRunning) return;
+
     const rect = this.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    // Check if the click is on an existing node
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      const dx = node.x - x;
+      const dy = node.y - y;
+      if (Math.sqrt(dx * dx + dy * dy) < 10) {
+        // Node was clicked — mark as source
+        sourceNode = i;
+        drawPoints(); // visually mark it
+        return;
+      }
+    }
+
+    // Otherwise, add a new node
     nodes.push({ x, y });
     drawPoints();
+    updateNodeListUI(); // <--- add this here
   });
 }
 
@@ -250,10 +275,74 @@ function drawPoints() {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#fff";
-  for (let point of nodes) {
+
+  for (let i = 0; i < nodes.length; i++) {
+    const point = nodes[i];
     ctx.beginPath();
-    ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+    ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = i === sourceNode ? "orange" : "#fff";
     ctx.fill();
   }
 }
+
+function updateNodeListUI() {
+  const container = document.getElementById("node-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  nodes.forEach((node, index) => {
+    const distance =
+      sourceNode !== null && index !== sourceNode
+        ? distanceMatrix[sourceNode][index].toFixed(2)
+        : "-";
+
+    const item = document.createElement("div");
+    item.className = "mb-1";
+    item.innerHTML = `Node ${index} → (x: ${node.x.toFixed(
+      1
+    )}, y: ${node.y.toFixed(
+      1
+    )}) | Distance from source: <span class="text-yellow-400">${distance}</span>`;
+    container.appendChild(item);
+  });
+}
+function updateResultTable() {
+  const tableDiv = document.getElementById("result-table");
+  const pathDiv = document.getElementById("final-path");
+
+  if (!tableDiv || !pathDiv || bestTour.length === 0) return;
+
+  let html = `<table class="w-full text-left border border-gray-600">
+    <thead class="bg-gray-800">
+      <tr>
+        <th class="px-2 py-1 border border-gray-600">Sr</th>
+        <th class="px-2 py-1 border border-gray-600">Source</th>
+        <th class="px-2 py-1 border border-gray-600">Destination</th>
+        <th class="px-2 py-1 border border-gray-600">Cost</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  for (let i = 0; i < bestTour.length - 1; i++) {
+    const from = bestTour[i];
+    const to = bestTour[i + 1];
+    const cost = distanceMatrix[from][to].toFixed(2);
+    html += `
+      <tr>
+        <td class="px-2 py-1 border border-gray-600">${i + 1}</td>
+        <td class="px-2 py-1 border border-gray-600">${from}</td>
+        <td class="px-2 py-1 border border-gray-600">${to}</td>
+        <td class="px-2 py-1 border border-gray-600 text-yellow-400">${cost}</td>
+      </tr>`;
+  }
+
+  html += `</tbody></table>`;
+  tableDiv.innerHTML = html;
+
+  // Show final path
+  const pathStr = bestTour.join(" → ");
+  pathDiv.innerHTML = `<strong>Best Path:</strong> <span class="text-green-400">${pathStr}</span>`;
+}
+export { updateNodeListUI, updateResultTable };
+

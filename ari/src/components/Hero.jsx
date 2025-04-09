@@ -572,14 +572,23 @@ const Hero = () => {
 
           {/* Social icons (optional) */}
           <div className="flex justify-center space-x-6">
-            <a href="#" className="text-gray-400 hover:text-white">
-              GitHub
+            <a
+              href="https://medium.com/@sawantkshitij1"
+              className="text-gray-400 hover:text-white"
+            >
+              Medium
             </a>
-            <a href="#" className="text-gray-400 hover:text-white">
-              Discord
+            <a
+              href="https://pin.it/7DwVGBAm1"
+              className="text-gray-400 hover:text-white"
+            >
+              Pintreset
             </a>
-            <a href="#" className="text-gray-400 hover:text-white">
-              Twitter
+            <a
+              href="https://open.spotify.com/user/y9jgqf640ahqksl7gprqup3ka?nd=1&dlsi=a2d0084adb8746ec"
+              className="text-gray-400 hover:text-white"
+            >
+              Spotify
             </a>
           </div>
         </div>

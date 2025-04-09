@@ -21,7 +21,7 @@ const Navbar = () => {
               to="/"
               className="inline-block rounded-sm border border-red-500 px-8 py-3 text-sm font-medium text-white transition hover:scale-110 hover:rotate-2 focus:ring-3 focus:outline-none"
             >
-              Hero Page
+              Hero
             </Link>
           </li>
           <li>
